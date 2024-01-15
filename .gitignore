@@ -1,0 +1,5 @@
+/build/
+*.nds
+/nitrofiles/roms/
+/nitrofiles/timendus/
+compile_commands.json
