@@ -59,12 +59,7 @@ typedef struct {
   u16 stack[24]; // Stack size is not strictly defined in spec
   u8 sp;
 
-
-  u32 display[2][32];
-  bool display_updated;
-
-  //u8* ram; // 4096 bytes on heap 
-  u8 ram[4096]; // 4096 bytes on stack
+  u8 ram[4096]; // 4096 bytes in the DTCM
 } Cpu;
 
 // Returns an initialized cpu instance

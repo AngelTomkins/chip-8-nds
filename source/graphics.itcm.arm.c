@@ -21,10 +21,11 @@ void init_bgs() {
 
 
   int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+  bgSetScale(bg3, 2<<5, 2<<5);
 
   bgGfx = bgGetGfxPtr(bg3);
-  memset(&bgGfx[0x4000], (3 << 8 | 3),  256*2);
-
+  // Draw horizontal line to show the end of the emulated display
+  memset(&bgGfx[0x1000], (3 << 8 | 3),  256);
 
   BG_PALETTE[0] = app_config.fg_colour;
   BG_PALETTE[1] = app_config.bg_colour;
@@ -37,17 +38,9 @@ void init_bgs() {
   decompress(keypadPal, BG_PALETTE_SUB, LZ77Vram);
 }
 
-void update_bg(u32 display[2][32]) {
-    // Render to BG
-      for (int large_x = 0; large_x < 256; large_x++) {
-        for (int large_y = 0; large_y < 128; large_y++) {
-          int small_x = large_x * 64 / 256;
-          int small_y = large_y * 32 / 128;
-
-          bgGfx[large_x/2 + large_y * 128 /*+ 4096*/] =
-            (((display[small_x/32][small_y] & (1 << (small_x % 32))) > 0) << 8) 
-              | ((display[small_x/32][small_y] & (1 << (small_x % 32))) > 0);
-        }
-      }
-      bgUpdate();
+void update_bg(u8 display[64*32]) {
+  for (u32 i = 0; i < 32; i++) {
+    dmaCopy(&display[i*64], &bgGfx[i*128], 64);
+  }
+  bgUpdate();
 }

@@ -8,6 +8,9 @@ DTCM_BSS Cpu cpu;
 DTCM_BSS u8 instruction_first;
 DTCM_BSS u8 instruction_second;
 
+// Display data stored in main ram so it can be DMA'd
+u8 display[64*32];
+
 // Returns an initialized cpu instance
 Cpu* cpu_init() {
   memset(&cpu, 0, sizeof(cpu));
@@ -201,7 +204,8 @@ static u8 get_reg_y() {
 }
 
 void ins_00E0() {
-  memset(&cpu.display, 0, 8*32);
+  memset(display, 0, sizeof(display));
+  update_bg(display);
 }
 
 void ins_00EE() {
@@ -328,19 +332,15 @@ void ins_DXYN() {
       if (x_pos >= 64) {
         break;
       }
-      const u8 x_pos_div = x_pos / 32;
-      flag_changed |=
-        ( (cpu.display[x_pos_div][y_pos] >> (x_pos % 32)) & 1 ) !=
-        ((display_byte & (0x80 >> j)) & 1);
 
-      cpu.display[x_pos_div][y_pos] ^=
-        ( ((display_byte >> (7-j)) & 1) << (x_pos % 32) );
+      flag_changed |= ( display[x_pos + y_pos*64] != ((display_byte & (0x80 >> j)) != 0) );
 
+      display[x_pos + y_pos*64] ^= (display_byte & (0x80 >> j)) != 0;
     }
   }
   cpu.registers_vx[0xF] = flag_changed;
 
-  update_bg(cpu.display);
+  update_bg(display);
 }
 
 void ins_EX9E() {

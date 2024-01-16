@@ -4,6 +4,6 @@
 #include <nds.h>
 
 void init_bgs();
-void update_bg(u32 display[2][32]);
+void update_bg(u8 display[64*32]);
 
 #endif

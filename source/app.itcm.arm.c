@@ -8,12 +8,12 @@
 #include "cpu.h"
 
 
-DTCM_BSS Cpu* cpu_p;
-DTCM_BSS touchPosition touchXY;
+Cpu* cpu_p;
+touchPosition touchXY;
 
-DTCM_BSS int sound;
+int sound;
 
-DTCM_DATA static const u8 KEYBOARD_LAYOUT[16] = {
+static const u8 KEYBOARD_LAYOUT[16] = {
   0x1, 0x2, 0x3, 0xC,
   0x4, 0x5, 0x6, 0xD,
   0x7, 0x8, 0x9, 0xE,
