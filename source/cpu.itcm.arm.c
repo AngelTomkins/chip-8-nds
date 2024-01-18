@@ -9,7 +9,7 @@ DTCM_BSS u8 instruction_first;
 DTCM_BSS u8 instruction_second;
 
 // Display data stored in main ram so it can be DMA'd
-u8 display[64*32];
+__attribute__((aligned(32))) u8 display[256*32];
 
 // Returns an initialized cpu instance
 Cpu* cpu_init() {
@@ -333,9 +333,9 @@ void ins_DXYN() {
         break;
       }
 
-      flag_changed |= ( display[x_pos + y_pos*64] != ((display_byte & (0x80 >> j)) != 0) );
+      flag_changed |= ( display[x_pos + y_pos*256] != ((display_byte & (0x80 >> j)) != 0) );
 
-      display[x_pos + y_pos*64] ^= (display_byte & (0x80 >> j)) != 0;
+      display[x_pos + y_pos*256] ^= (display_byte & (0x80 >> j)) != 0;
     }
   }
   cpu.registers_vx[0xF] = flag_changed;
