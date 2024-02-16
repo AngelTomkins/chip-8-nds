@@ -11,4 +11,6 @@ GAME_SUBTITLE		:=
 GAME_AUTHOR		:= github.com/AngelTomkins/
 GAME_ICON		:= gfx/icon.bmp
 
+SOURCEDIRS := source include
+
 include $(BLOCKSDS)/sys/default_makefiles/rom_arm9/Makefile

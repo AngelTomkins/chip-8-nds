@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include <filesystem.h>
+#include "config.h"
 #include "graphics.h"
 
 #define VF_REGISTER 1
@@ -341,6 +342,9 @@ void ins_DXYN() {
   cpu.registers_vx[0xF] = flag_changed;
 
   update_bg(display);
+  if (app_config.vblank_on_draw) {
+    swiWaitForVBlank();
+  }
 }
 
 void ins_EX9E() {

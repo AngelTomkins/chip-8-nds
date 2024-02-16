@@ -4,12 +4,16 @@
 #include <stdlib.h>
 #include "config.h"
 #include "graphics.h"
+#include "profiling.h"
 #include "roms.h"
 #include "cpu.h"
+#include "menu.h"
 
 
 Cpu* cpu_p;
 touchPosition touchXY;
+DTCM_BSS u32 instructions_per_frame;
+bool emulation_paused;
 
 int sound;
 
@@ -25,7 +29,16 @@ static void init(char* rom);
 static void loop();
 static ARM_CODE void update_keys();
 
+void Vblank_dummy() {}
 void Vblank() {
+    update_keys();
+    if (keysDown() & KEY_START) {
+      irqSet(IRQ_VBLANK, Vblank_dummy);
+      open_menu();
+      irqSet(IRQ_VBLANK, Vblank);
+    }
+    profiling_framerate_push(instructions_per_frame);
+    instructions_per_frame = 0;
     cpu_p->sound_timer -= cpu_p->sound_timer ? 1 : 0;
     cpu_p->delay_timer -= cpu_p->delay_timer ? 1 : 0;
     if (cpu_p->sound_timer != 0) {
@@ -53,6 +66,7 @@ static void init(char* rom) {
 
   init_config();
   init_bgs();
+  init_config_console(7);
   cpu_p = cpu_init();
   load_rom(rom, cpu_p->ram);
 
@@ -61,10 +75,11 @@ static void init(char* rom) {
 
 static void loop() {
   while (1) {
-    for (int i = 0; i < app_config.emulation_speed; i++) {
+    for (int i = 0; i < ipf_presets[app_config.emulation_speed]; i++) {
       cpu_next_instruction();
-      update_keys();
+      instructions_per_frame += 1;
     }
+
     swiWaitForVBlank();
   }
 }

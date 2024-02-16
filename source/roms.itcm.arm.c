@@ -21,9 +21,6 @@ void load_rom(char* path, u8* cpu_ram) {
     }
 
     fread(&cpu_ram[0x200], sizeof(u8), fileSize, f);
-    for (int i = 0; i < 200; i++) {
-      printf("%02x", cpu_ram[i + 0x200]);
-    }
 
     fclose(f);
 }

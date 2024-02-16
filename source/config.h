@@ -3,18 +3,18 @@
 
 #include <nds.h>
 
-#define DEFAULT_FG_COLOUR RGB15(6,6,6)
-#define DEFAULT_BG_COLOUR RGB15(31,16,24)
-#define DEFAULT_FLAIR_COLOUR RGB15(24,24,24)
+#define NUM_COLOUR_PRESETS 5
+#define NUM_IPF_PRESETS 10
 
-#define DEFAULT_EMULATION_SPEED 7
+extern const u32 ipf_presets[NUM_IPF_PRESETS];
+extern const u32 color_presets[NUM_COLOUR_PRESETS][3];
+extern const char* color_presets_names[NUM_COLOUR_PRESETS];
 
 typedef struct {
-  int fg_colour;
-  int bg_colour;
-  int flair_colour;
+  int colour_scheme;
 
   int emulation_speed; // number of instructions per frame
+  int vblank_on_draw;
 } AppConfig;
 
 extern AppConfig app_config;
