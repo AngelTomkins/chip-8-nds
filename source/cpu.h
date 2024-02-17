@@ -3,8 +3,6 @@
 
 #include <nds.h>
 
-typedef void (*FunctionPointer)();
-
 /****************/
 /* Instructions */
 /****************/
@@ -44,7 +42,8 @@ void ins_FX55();
 void ins_FX65();
 
 
-typedef struct {
+
+typedef struct __attribute__((__packed__)) {
   u16 pc;
   u16 index;
 
@@ -59,7 +58,7 @@ typedef struct {
   u16 stack[24]; // Stack size is not strictly defined in spec
   u8 sp;
 
-  u8 ram[4096]; // 4096 bytes in the DTCM
+  u8* ram;// 4096 bytes in the main ram
 } Cpu;
 
 // Returns an initialized cpu instance

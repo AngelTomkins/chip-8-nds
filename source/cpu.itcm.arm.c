@@ -1,27 +1,38 @@
 #include "cpu.h"
 #include <filesystem.h>
+#include <stdlib.h>
 #include "config.h"
 #include "graphics.h"
 
+#include "../include/tonccpy.h"
+
 #define VF_REGISTER 1
 
-DTCM_BSS Cpu cpu;
+DTCM_DATA Cpu cpu = {
+  .pc = 0x200,
+  .index = 0,
+  .registers_vx = {0},
+  .delay_timer = 0,
+  .sound_timer = 0,
+  .key_down = 0,
+  .key_old = 0,
+  .stack = {0},
+  .sp = 0,
+};
+
 DTCM_BSS u8 instruction_first;
 DTCM_BSS u8 instruction_second;
 
-// Display data stored in main ram so it can be DMA'd
-__attribute__((aligned(32))) u8 display[256*32];
+__attribute__((aligned(32))) u8 display[64*32] = {0};
 
 // Returns an initialized cpu instance
 Cpu* cpu_init() {
-  memset(&cpu, 0, sizeof(cpu));
+  cpu.ram = (u8*)calloc(4096, sizeof(u8));
+  sassert(cpu.ram != NULL, "Could not allocate ram");
 
   FILE *f = fopen("nitro:/internal/character_data.bin", "rb");
-  fread(&cpu.ram, 1, 80, f);
+  fread(cpu.ram, 1, 80, f);
   fclose(f);
-
-  // Set PC to start of rom
-  cpu.pc = 0x200;
 
   return &cpu;
 }
@@ -205,7 +216,7 @@ static u8 get_reg_y() {
 }
 
 void ins_00E0() {
-  memset(display, 0, sizeof(display));
+  toncset32(display, 0, sizeof(display));
   update_bg(display);
 }
 
@@ -334,9 +345,9 @@ void ins_DXYN() {
         break;
       }
 
-      flag_changed |= ( display[x_pos + y_pos*256] != ((display_byte & (0x80 >> j)) != 0) );
+      flag_changed |= ( display[x_pos + y_pos*64] != ((display_byte & (0x80 >> j)) != 0) );
 
-      display[x_pos + y_pos*256] ^= (display_byte & (0x80 >> j)) != 0;
+      display[x_pos + y_pos*64] ^= (display_byte & (0x80 >> j)) != 0;
     }
   }
   cpu.registers_vx[0xF] = flag_changed;

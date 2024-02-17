@@ -13,7 +13,6 @@ int main(int argc, char* argv[]) {
     rom = DEFAULT_ROM;
   }
 
-
   app_run(rom);
   return 0;
 }

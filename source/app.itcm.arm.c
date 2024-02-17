@@ -27,15 +27,19 @@ static const u8 KEYBOARD_LAYOUT[16] = {
 
 static void init(char* rom);
 static void loop();
-static ARM_CODE void update_keys();
+static void update_keys();
 
-void Vblank_dummy() {}
+
 void Vblank() {
+    if (emulation_paused) {
+      return;
+    }
     update_keys();
     if (keysDown() & KEY_START) {
-      irqSet(IRQ_VBLANK, Vblank_dummy);
+      soundPause(sound);
+      emulation_paused = true;
       open_menu();
-      irqSet(IRQ_VBLANK, Vblank);
+      emulation_paused = false;
     }
     profiling_framerate_push(instructions_per_frame);
     instructions_per_frame = 0;
@@ -64,9 +68,9 @@ static void init(char* rom) {
     while (1) { swiWaitForVBlank(); }
   }
 
-  init_config();
-  init_bgs();
-  init_config_console(7);
+  BgIds* bg_ids = init_bgs();
+  init_config_console(bg_ids->sub[3]);
+
   cpu_p = cpu_init();
   load_rom(rom, cpu_p->ram);
 
