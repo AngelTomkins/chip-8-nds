@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/angeltomkins%2Fchip--8--nds-red?logo=Github&label=github.com%2F&link=https%3A%2F%2Fgithub.com%2FAngelTomkins%2Fchip-8-nds)
+[![Static Badge](https://img.shields.io/badge/angeltomkins%2Fchip--8--nds-red?logo=Github&label=github.com%2F&link=https%3A%2F%2Fgithub.com%2FAngelTomkins%2Fchip-8-nds)](https://github.com/AngelTomkins/chip-8-nds)
 # Chip 8 NDS
 Chip 8 NDS is an emulator written in C for the Nintendo DS to run CHIP-8 programs.
 
