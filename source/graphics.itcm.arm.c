@@ -17,12 +17,12 @@ BgIds* init_bgs() {
   vramSetBankC(VRAM_C_SUB_BG);
 
   // Emulator Screen on top
-  bg_ids.main[3] = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+  bg_ids.main[3] = bgInit(3, BgType_Bmp8, BgSize_B8_128x128, 0, 0);
   bgSetScale(bg_ids.main[3], 2<<5, 2<<5);
 
   bgGfx = bgGetGfxPtr(bg_ids.main[3]);
   // Draw horizontal line to show the end of the emulated display
-  for (u32 i = 0x1000; i < 0x1020; i++) {
+  for (u32 i = 0x800; i < 0x820; i++) {
     bgGfx[i] = (2 << 8 | 2);
   }
 
