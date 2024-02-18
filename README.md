@@ -14,6 +14,7 @@ Chip 8 NDS is an emulator written in C for the Nintendo DS to run CHIP-8 program
 | ⚒️ | Config Menu |
 | ❌ | Quirks Toggle |
 | ❌ | CHIP-8 Variants |
+| ❌ | Rom Picking at Runtime |
 
 ## Building
 Ensure you have [BlocksDS](https://blocksds.github.io/docs/) installed.
