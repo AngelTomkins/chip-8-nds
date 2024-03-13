@@ -57,7 +57,11 @@ static void init(char* rom) {
   init_config_console(bg_ids->sub[2], bg_ids->sub[0]);
 
   cpu_p = cpu_init();
-  load_rom(rom);
+  if (rom != NULL) {
+    load_rom(rom);
+  } else {
+    open_menu();
+  }
 
   irqSet(IRQ_VBLANK, Vblank);
 }
