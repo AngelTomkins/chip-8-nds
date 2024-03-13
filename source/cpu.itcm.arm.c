@@ -362,7 +362,7 @@ void ins_DXYN() {
         break;
       }
 
-      flag_changed |= ( ((u8*)bgGfx)[x_pos + y_pos*128] != ((display_byte & (0x80 >> j)) != 0) );
+      flag_changed |= ( ((((u8*)bgGfx)[x_pos + y_pos*128] & (0x80 >> j)) != 0) && ((display_byte & (0x80 >> j)) == 0) );
 
       ((u8*)bgGfx)[x_pos + y_pos*128] ^= (display_byte & (0x80 >> j)) != 0;
     }
