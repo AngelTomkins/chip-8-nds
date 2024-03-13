@@ -1,5 +1,7 @@
 #include "app.h"
 
+#include <nds.h>
+#include <fat.h>
 #include <filesystem.h>
 #include <stdlib.h>
 #include "config.h"
@@ -31,29 +33,11 @@ static void update_keys();
 
 
 void Vblank() {
-    if (emulation_paused) {
-      return;
-    }
-    update_keys();
-    if (keysDown() & KEY_START) {
-      soundPause(sound);
-      emulation_paused = true;
-      open_menu();
-      emulation_paused = false;
-    }
-    profiling_framerate_push(instructions_per_frame);
-    instructions_per_frame = 0;
-    cpu_p->sound_timer -= cpu_p->sound_timer ? 1 : 0;
-    cpu_p->delay_timer -= cpu_p->delay_timer ? 1 : 0;
-    if (cpu_p->sound_timer != 0) {
-      soundResume(sound);
-    } else {
-      soundPause(sound);
-    }
 }
 
 void app_run(char* rom) {
   init(rom);
+  cpu_reset();
   loop();
 }
 
@@ -67,18 +51,36 @@ static void init(char* rom) {
     printf("didn't init");
     while (1) { swiWaitForVBlank(); }
   }
+  fatInitDefault();
 
   BgIds* bg_ids = init_bgs();
-  init_config_console(bg_ids->sub[3]);
+  init_config_console(bg_ids->sub[2], bg_ids->sub[0]);
 
   cpu_p = cpu_init();
-  load_rom(rom, cpu_p->ram);
+  load_rom(rom);
 
   irqSet(IRQ_VBLANK, Vblank);
 }
 
 static void loop() {
   while (1) {
+    update_keys();
+    if (keysDown() & KEY_START) {
+      soundPause(sound);
+      open_menu();
+      continue;
+    }
+
+    profiling_framerate_push(instructions_per_frame);
+    instructions_per_frame = 0;
+    cpu_p->sound_timer -= cpu_p->sound_timer ? 1 : 0;
+    cpu_p->delay_timer -= cpu_p->delay_timer ? 1 : 0;
+    if (cpu_p->sound_timer != 0) {
+      soundResume(sound);
+    } else {
+      soundPause(sound);
+    }
+
     for (int i = 0; i < ipf_presets[app_config.emulation_speed]; i++) {
       cpu_next_instruction();
       instructions_per_frame += 1;

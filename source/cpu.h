@@ -65,6 +65,7 @@ typedef struct __attribute__((__packed__)) {
 Cpu* cpu_init();
 
 void cpu_next_instruction();
+void cpu_reset();
 
 
 #endif

@@ -6,7 +6,7 @@
 
 #include "../include/tonccpy.h"
 
-#define VF_REGISTER 1
+extern u16* bgGfx;
 
 DTCM_DATA Cpu cpu = {
   .pc = 0x200,
@@ -23,18 +23,36 @@ DTCM_DATA Cpu cpu = {
 DTCM_BSS u8 instruction_first;
 DTCM_BSS u8 instruction_second;
 
-__attribute__((aligned(32))) u8 display[64*32] = {0};
+__attribute__((aligned(32))) u8 ram[4096] = {0};
 
 // Returns an initialized cpu instance
 Cpu* cpu_init() {
-  cpu.ram = (u8*)calloc(4096, sizeof(u8));
-  sassert(cpu.ram != NULL, "Could not allocate ram");
+  cpu.ram = ram;
 
   FILE *f = fopen("nitro:/internal/character_data.bin", "rb");
   fread(cpu.ram, 1, 80, f);
   fclose(f);
 
   return &cpu;
+}
+
+void cpu_reset() {
+  cpu.pc = 0x200;
+  cpu.index = 0;
+  cpu.delay_timer = 0;
+  cpu.sound_timer = 0;
+  cpu.key_down = 0;
+  cpu.key_old = 0;
+  cpu.sp = 0;
+
+  for (int i = 0; i < 16; i++) {
+    cpu.registers_vx[i] = 0;
+  }
+  for (int i = 0; i < 24; i++) {
+    cpu.stack[i] = 0;
+  }
+  toncset16(bgGfx, 0, 128*16);
+  cpu_init();
 }
 
 
@@ -216,8 +234,7 @@ static u8 get_reg_y() {
 }
 
 void ins_00E0() {
-  toncset32(display, 0, sizeof(display));
-  update_bg(display);
+  toncset16(bgGfx, 0, 128*16);
 }
 
 void ins_00EE() {
@@ -325,6 +342,7 @@ void ins_CXNN() {
   cpu.registers_vx[get_reg_x()] = rand() % (instruction_second);
 }
 
+
 void ins_DXYN() {
   u8 flag_changed = 0;
 
@@ -345,14 +363,13 @@ void ins_DXYN() {
         break;
       }
 
-      flag_changed |= ( display[x_pos + y_pos*64] != ((display_byte & (0x80 >> j)) != 0) );
+      flag_changed |= ( ((u8*)bgGfx)[x_pos + y_pos*128] != ((display_byte & (0x80 >> j)) != 0) );
 
-      display[x_pos + y_pos*64] ^= (display_byte & (0x80 >> j)) != 0;
+      ((u8*)bgGfx)[x_pos + y_pos*128] ^= (display_byte & (0x80 >> j)) != 0;
     }
   }
   cpu.registers_vx[0xF] = flag_changed;
 
-  update_bg(display);
   if (app_config.vblank_on_draw) {
     swiWaitForVBlank();
   }

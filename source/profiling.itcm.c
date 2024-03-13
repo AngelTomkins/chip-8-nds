@@ -10,7 +10,7 @@ void profiling_framerate_push(u32 instructions_per_frame) {
 }
 
 u32 profiling_framerate_get_average() {
-  u32 sum = 0;
+  u64 sum = 0;
   for (int i = 0; i < NUM_PREVIOUS_FRAMES; i++) {
     sum += framerate_stats.num_instructions_per_frame[i];
   }

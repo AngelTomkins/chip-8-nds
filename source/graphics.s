@@ -2,7 +2,7 @@
 .arch armv5te
 .cpu arm946e-s
 
-.align 2
+.align 4
 .arm
 .section .itcm
 .global asm_update_bg
@@ -17,5 +17,5 @@ asm_update_bg:
   add r1, r1, #(128-64)
   subs r2, r2, #1
   bne 1b
-  pop {r4-r8,pc}
+  pop {r4-r8,lr}
   bx lr

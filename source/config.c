@@ -1,6 +1,6 @@
 #include "config.h"
 
-const u16 ipf_presets[NUM_IPF_PRESETS] = { 7, 15, 20, 30, 100, 200, 500, 700, 1000, 9999};
+const u16 ipf_presets[NUM_IPF_PRESETS] = { 7, 15, 20, 30, 100, 200, 500, 700, 1000, 65535};
 
 const u16 color_presets[NUM_COLOUR_PRESETS][3] = {
   {
