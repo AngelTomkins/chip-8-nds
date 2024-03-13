@@ -37,9 +37,9 @@ BgIds* init_bgs() {
   bgHide(bg_ids.sub[2]);
   toncset16(bgGetGfxPtr(bg_ids.sub[2]), 253<<8|253, 256*256/2);
 
-  decompress(keypadTiles, bgGetGfxPtr(bg_ids.sub[0]), LZ77Vram);
-  decompress(keypadMap, bgGetMapPtr(bg_ids.sub[0]), LZ77Vram);
-  decompress(keypadPal, BG_PALETTE_SUB, LZ77Vram);
+  dmaCopy(keypadTiles, bgGetGfxPtr(bg_ids.sub[0]), keypadTilesLen);
+  dmaCopy(keypadMap, bgGetMapPtr(bg_ids.sub[0]), keypadMapLen);
+  dmaCopy(keypadPal, BG_PALETTE_SUB, keypadPalLen);
 
   BG_PALETTE_SUB[253] = RGB15(0,0,0);
   BG_PALETTE_SUB[254] = RGB15(31,31,31);

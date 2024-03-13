@@ -31,10 +31,6 @@ static void init(char* rom);
 static void loop();
 static void update_keys();
 
-
-void Vblank() {
-}
-
 void app_run(char* rom) {
   init(rom);
   cpu_reset();
@@ -62,8 +58,6 @@ static void init(char* rom) {
   } else {
     open_menu();
   }
-
-  irqSet(IRQ_VBLANK, Vblank);
 }
 
 static void loop() {

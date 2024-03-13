@@ -2,7 +2,6 @@
 #include <filesystem.h>
 #include <stdlib.h>
 #include "config.h"
-#include "graphics.h"
 
 #include "../include/tonccpy.h"
 
