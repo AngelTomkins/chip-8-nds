@@ -351,7 +351,7 @@ void ins_DXYN() {
   for (u32 i = 0; i < (instruction_second & 0xF); i++) {
     const u8 y_pos = y_val + i;
     if (y_pos >= 32) {
-      return;
+      break;
     }
 
     u8 display_byte = cpu.ram[cpu.index + i];
@@ -362,9 +362,15 @@ void ins_DXYN() {
         break;
       }
 
-      flag_changed |= ( ((((u8*)bgGfx)[x_pos + y_pos*128] & (0x80 >> j)) != 0) && ((display_byte & (0x80 >> j)) == 0) );
+      u8 pixel = ((display_byte & (0x80 >> j))) > 0;
 
-      ((u8*)bgGfx)[x_pos + y_pos*128] ^= (display_byte & (0x80 >> j)) != 0;
+      if (pixel == 0) {
+        continue;
+      }
+
+      flag_changed |= (((u8*)bgGfx)[x_pos + y_pos*128]);
+
+      ((u8*)bgGfx)[x_pos + y_pos*128] ^= pixel;
     }
   }
   cpu.registers_vx[0xF] = flag_changed;
